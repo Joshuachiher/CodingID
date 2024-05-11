@@ -30,7 +30,7 @@ const LoginPage = () => {
       console.log(data); // User authenticated successfully
       localStorage.setItem('token', data); // Set token in localStorage
       setIsLoggedIn(true); // Update isLoggedIn state
-      navigate('/afterkelas'); // Navigate to register page after successful login
+      navigate('/afterclass'); // Navigate to register page after successful login
     } else {
       // Handle errors
       console.error('Failed to login');

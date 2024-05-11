@@ -2,28 +2,32 @@ import {Box, Container, Grid, Paper, Button} from '@mui/material'
 import HeaderSignIn from "../../components/header/Header-signed-in/navbar-signin"
 import Footer from "../../components/footer"
 import { useEffect, useState } from 'react'
+import { useParams } from "react-router-dom"
 
 const DetailClass = () => {
-    const [courses, setCourses] = useState([])
+    const {id} = useParams()
+    const [courses, setCourses] = useState([]);
 
     useEffect(() => {
-        // Fetch courses
-        fetch('https://localhost:7012/api/Course/GetAll')
-            .then(response => response.json())
-            .then(data => {setCourses(data);
-            console.log('Courses:', data);
-    })
-            .catch(error => console.error('Error fetching courses:', error));
+        fetch(`https://localhost:7012/api/Course/GetByCategoryId?categoryId=${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setCourses(data);
+                console.log('Courses:', data);
+            })
+            .catch(error => {
+                console.error('Error fetching courses:', error);
+            });
+    }, [id]); 
 
-        // Fetch categories
-            fetch('https://localhost:7012/api/Category/GetAll')
-                .then(response => response.json())
-                .then(data => {
-                    setCategories(data);
-                    console.log('Category:', data);
-                })
-                .catch(error => console.error('Error fetching categories:', error));
-        }, []);
+    useEffect(() => {
+        console.log(courses)
+    },[courses])
 
     return (
         <Container>
@@ -112,10 +116,9 @@ const DetailClass = () => {
                 Another menu in this class
             </div>
 
-            <Grid container spacing={2} fontFamily={'Montserrat'}
-            >
+            <Grid container spacing={2} fontFamily={'Montserrat'}>
                 {courses.map((course, index) => (
-                    <Grid key={index} xs={12} sm={6} md={4}>
+                  <Grid key={`${index}`} xs={12} sm={6} md={4}>
                         <Paper elevation={0} style={{ padding: 0 }}>
                             <div> <img src={course.img}/> </div>
                             <div style={{
@@ -123,24 +126,25 @@ const DetailClass = () => {
                                     fontSize: '16px',
                                     color: '#828282'
                                 }}
-                            > {course.category} </div>
+                            > {course.description} </div>
                             <div style={{
                                     fontWeight: 600,
                                     width: '320px',
                                     height: '70px',
                                     fontSize: '20px',
                                     color: '#5B4947'
-                                }}> {course.name} </div>
+                                }}> {course.course_Name} </div>
                             <div style={{
                                 fontWeight: 600,
                                 fontSize: '20px',
                                 color: '#FABC1D',
                                 marginBottom: '24px'
-                            }}> {course.price} </div>
+                            }}>{course.course_price}  </div>
                         </Paper>
                     </Grid>
                 ))}
             </Grid>
+            
             <Footer/>
         </Container>
         

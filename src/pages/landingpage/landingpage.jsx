@@ -1,50 +1,38 @@
 import imageTitle from "../../assets/title-bg.png"
 import interludeBg from "../../assets/interlude-bg.png"
-import tomyum from "../../assets/tomyum.png"
-import chococookies from "../../assets/chococookies.png"
-import greenteacheesecake from "../../assets/green-tea-cheesecake.png"
-import sotobanjar from "../../assets/soto-banjar.png"
-import strawfloat from "../../assets/strawberry-float.png"
-import bolognese from "../../assets/spaghetti-bolognese.png"
-import catasian from "../../assets/cat-asian.png"
-import catwestern from "../../assets/cat-western.png"
-import catjunkfood from "../../assets/cat-junkfood.png"
-import cathotdrink from "../../assets/cat-hot-drink.png"
-import cateastern from "../../assets/cat-eastern.png"
-import catdessert from "../../assets/cat-dessert.png"
-import catcookies from "../../assets/cat-cookies.png"
-import catcolddrink from "../../assets/cat-cold-drink.png"
 import { Link } from 'react-router-dom'
 import {Box, Container , Grid, Paper} from '@mui/material'
-import '@fontsource/Montserrat/300.css';
-import '@fontsource/Montserrat/400.css';
-import '@fontsource/Montserrat/500.css';
-import '@fontsource/Montserrat/600.css';
-import '@fontsource/Montserrat/700.css';
-import HeaderAuth from "../../components/Header-auth"
-import Footer from "../../components/Footer"
+import Navbar from "../../components/header/header-login/navbar-login"
+import Footer from "../../components/footer"
+import { useState, useEffect } from "react"
 
 const LandingPage = () => {
     const [courses, setCourses] = useState([]);
     const [categories, setCategories] = useState([]);
 
+    
     useEffect(() => {
         // Fetch courses
-        fetch('http://localhost:7012/api/courses')
+        fetch('https://localhost:7012/api/Course/GetAll')
             .then(response => response.json())
-            .then(data => setCourses(data))
+            .then(data => {setCourses(data);
+            console.log('Courses:', data);
+    })
             .catch(error => console.error('Error fetching courses:', error));
 
         // Fetch categories
-        fetch('http://localhost:7012/api/categories')
-            .then(response => response.json())
-            .then(data => setCategories(data))
-            .catch(error => console.error('Error fetching categories:', error));
-    }, []);
+            fetch('https://localhost:7012/api/Category/GetAll')
+                .then(response => response.json())
+                .then(data => {
+                    setCategories(data);
+                    console.log('Category:', data);
+                })
+                .catch(error => console.error('Error fetching categories:', error));
+        }, []);
     
     return (
         <Container>
-            <HeaderAuth/>
+            <Navbar/>
 
             <Box
                 sx={{
@@ -199,30 +187,32 @@ const LandingPage = () => {
 
             <Grid container spacing={2} fontFamily={'Montserrat'}
             >
-                {proClass.map((data) => (
-                    <Grid item key={data.id} xs={12} sm={6} md={4}>
+                {courses.map((course) => (
+                    <Grid item key  ={course.id} xs={12} sm={6} md={4}>
+                        <Link to={`/list-menu-kelas/`} style={{ textDecoration: 'none' }}>
                         <Paper elevation={0} style={{ padding: 20 }}>
-                            <div> <img src={data.img}/> </div>
+                            <div> <img src={course.img} alt={course.course_name}/> </div>
                             <div style={{
                                     fontWeight: 400,
                                     fontSize: '16px',
                                     color: '#828282'
                                 }}
-                            > {data.category} </div>
+                            > {course.category_name} </div>
                             <div style={{
                                     fontWeight: 600,
                                     fontSize: '20px',
                                     width: '320px',
                                     height: '70px',
                                     color: '#5B4947'
-                                }}> {data.name} </div>
+                                }}> {course.course_Name} </div>
                             <div style={{
                                 fontWeight: 600,
                                 fontSize: '20px',
                                 color: '#FABC1D',
                                 marginBottom: '24px'
-                            }}> {data.price} </div>
+                            }}> {course.course_price} </div>
                         </Paper>
+                        </Link>
                     </Grid>
                 ))}
             </Grid>
@@ -281,21 +271,21 @@ const LandingPage = () => {
 
             <Grid container spacing={3} fontFamily={'Montserrat'}
             >
-                {categoryClass.map((data) => (
-                    <Grid item key={data.id} xs={12} sm={6} md={3}>
-                        <Link to={'/list-menu-kelas'} style={{ textDecoration: 'none' }}>
+                {categories.map((categori, index) => (
+                    <Grid key={index} xs={12} sm={6} md={3}>
+                        <Link to={`/list-menu-kelas/${categori.category_id}`} style={{ textDecoration: 'none' }}>
                             <Paper elevation={0} style={{ padding: 20 }}>
                                 <div 
                                     style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}
                                 > 
-                                    <img src={data.img} alt={data.name} style={{ marginBottom: '16px' }}/> 
+                                    <img src={categori.img} alt={categori.category_name} style={{ marginBottom: '16px' }}/> 
                                     <div style={{
                                             fontWeight: 400,
                                             fontSize: '24px',
                                             color: 'black',
                                             textAlign: 'center'
                                         }}
-                                    > {data.name} </div>
+                                    > {categori.category_name} </div>
                                 </div>
                             </Paper>
                         </Link>
